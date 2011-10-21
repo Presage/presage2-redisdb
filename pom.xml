@@ -45,6 +45,17 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>presage</id>
+			<name>Presage Repository</name>
+			<url>http://ee-sm1106.ee.ic.ac.uk:8080/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
 		<repository>
 			<id>presage-releases</id>
