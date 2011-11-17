@@ -1,10 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>uk.ac.imperial.presage2</groupId>
+	<parent>
+		<groupId>uk.ac.imperial.presage2</groupId>
+		<artifactId>presage2</artifactId>
+		<version>0.2.5-SNAPSHOT</version>
+	</parent>
 	<artifactId>presage2-redisdb</artifactId>
-	<version>0.2.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>presage2-redisdb</name>
@@ -36,31 +38,5 @@
 		</dependency>
 
 	</dependencies>
-
-	<build>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>presage-releases</id>
-			<url>http://ee-sm1106.ee.ic.ac.uk:8080/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>presage-snapshots</id>
-			<url>http://ee-sm1106.ee.ic.ac.uk:8080/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
+	
 </project>
