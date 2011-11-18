@@ -1,6 +1,5 @@
 package uk.ac.imperial.presage2.db.redis;
 
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 import uk.ac.imperial.presage2.core.db.GenericStorageServiceTest;
 
@@ -12,15 +11,14 @@ public class RedisStorageTest extends GenericStorageServiceTest {
 		// tests will fail.
 		JedisPoolConfig config = new JedisPoolConfig();
 		RedisDatabase redis = new RedisDatabase("localhost", config);
-
-		final Jedis jedis = redis.get().getResource();
+		redis.database = 10; // use db 10 in the redis instance
 		try {
-			// clear db 2 for testing
-			jedis.select(2);
-			jedis.flushDB();
-		} finally {
-			redis.get().returnResource(jedis);
+			redis.start();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
+		redis.pool.getResource().flushDB();
+
 		this.db = redis;
 		this.sto = redis;
 	}

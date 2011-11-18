@@ -47,7 +47,7 @@ public class RedisDatabase implements DatabaseService, StorageService, Provider<
 	private final String host;
 	private final JedisPoolConfig config;
 
-	private JedisPool pool = null;
+	JedisPool pool = null;
 
 	int database = 0;
 	Simulation.Factory simFactory;
