@@ -192,20 +192,36 @@ public class Simulation extends JedisPoolUser implements PersistentSimulation {
 
 	@Override
 	public void setParentSimulation(PersistentSimulation parent) {
-		throw new UnsupportedOperationException(
-				"PersistentSimulation.setParentSimulation() not implemented for redis db.");
+		final Jedis r = pool.getResource();
+		try {
+			setLong(Keys.Simulation.parent(getID()), parent.getID());
+			r.sadd(Keys.Simulation.children(parent.getID()), Long.valueOf(getID()).toString());
+		} finally {
+			pool.returnResource(r);
+		}
 	}
 
 	@Override
 	public PersistentSimulation getParentSimulation() {
-		throw new UnsupportedOperationException(
-				"PersistentSimulation.getParentSimulation() not implemented for redis db.");
+		long parentId = getLong(Keys.Simulation.parent(simulationID));
+		if (parentId != 0L)
+			return db.getSimulationById(parentId);
+		else
+			return null;
 	}
 
 	@Override
 	public List<Long> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		final Jedis r = pool.getResource();
+		try {
+			List<Long> children = new LinkedList<Long>();
+			for (String id : r.smembers(Keys.Simulation.children(getID()))) {
+				children.add(Long.parseLong(id));
+			}
+			return children;
+		} finally {
+			pool.returnResource(r);
+		}
 	}
 
 	@Override

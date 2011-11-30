@@ -81,6 +81,14 @@ final class Keys {
 			return prefix(id) + "agents";
 		}
 
+		final static String parent(long id) {
+			return prefix(id) + "parent";
+		}
+
+		final static String children(long id) {
+			return prefix(id) + "children";
+		}
+
 	}
 
 	static class Agent {
