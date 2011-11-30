@@ -137,4 +137,27 @@ final class Keys {
 
 	}
 
+	static final class Environment {
+
+		final long simID;
+
+		Environment(long simID) {
+			super();
+			this.simID = simID;
+		}
+
+		String prefix() {
+			return Keys.Simulation.prefix(simID) + "env:";
+		}
+
+		public String property(String name) {
+			return prefix() + name;
+		}
+
+		public String property(String name, int time) {
+			return prefix() + name + ":" + time;
+		}
+
+	}
+
 }
