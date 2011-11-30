@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 import uk.ac.imperial.presage2.core.db.DatabaseService;
 import uk.ac.imperial.presage2.core.db.StorageService;
 import uk.ac.imperial.presage2.core.db.Transaction;
@@ -46,8 +47,9 @@ public class RedisDatabase implements DatabaseService, StorageService, Provider<
 	private final String host;
 	private final JedisPoolConfig config;
 
-	private JedisPool pool = null;
+	JedisPool pool = null;
 
+	int database = 0;
 	Simulation.Factory simFactory;
 	PersistentAgentFactory agentFactory;
 
@@ -106,7 +108,7 @@ public class RedisDatabase implements DatabaseService, StorageService, Provider<
 	@Override
 	public void start() throws Exception {
 		if (!isStarted()) {
-			this.pool = new JedisPool(this.config, this.host);
+			this.pool = new JedisPool(this.config, this.host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, null, database);
 
 			this.simFactory = new Simulation.Factory(this, this.pool);
 			this.agentFactory = new Agent.Factory(this, this.pool);
