@@ -81,6 +81,14 @@ final class Keys {
 			return prefix(id) + "agents";
 		}
 
+		final static String parent(long id) {
+			return prefix(id) + "parent";
+		}
+
+		final static String children(long id) {
+			return prefix(id) + "children";
+		}
+
 	}
 
 	static class Agent {
@@ -133,6 +141,29 @@ final class Keys {
 		@Override
 		public String property(String name) {
 			return prefix() + name;
+		}
+
+	}
+
+	static final class Environment {
+
+		final long simID;
+
+		Environment(long simID) {
+			super();
+			this.simID = simID;
+		}
+
+		String prefix() {
+			return Keys.Simulation.prefix(simID) + "env:";
+		}
+
+		public String property(String name) {
+			return prefix() + name;
+		}
+
+		public String property(String name, int time) {
+			return prefix() + name + ":" + time;
 		}
 
 	}

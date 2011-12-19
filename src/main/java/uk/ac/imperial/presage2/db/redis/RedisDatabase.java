@@ -108,7 +108,8 @@ public class RedisDatabase implements DatabaseService, StorageService, Provider<
 	@Override
 	public void start() throws Exception {
 		if (!isStarted()) {
-			this.pool = new JedisPool(this.config, this.host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, null, database);
+			this.pool = new JedisPool(this.config, this.host, Protocol.DEFAULT_PORT,
+					Protocol.DEFAULT_TIMEOUT, null, database);
 
 			this.simFactory = new Simulation.Factory(this, this.pool);
 			this.agentFactory = new Agent.Factory(this, this.pool);

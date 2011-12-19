@@ -31,6 +31,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import uk.ac.imperial.presage2.core.db.StorageService;
 import uk.ac.imperial.presage2.core.db.persistent.PersistentAgent;
+import uk.ac.imperial.presage2.core.db.persistent.PersistentEnvironment;
 import uk.ac.imperial.presage2.core.db.persistent.PersistentSimulation;
 import uk.ac.imperial.presage2.core.db.persistent.SimulationFactory;
 
@@ -40,6 +41,8 @@ import com.google.inject.Singleton;
 public class Simulation extends JedisPoolUser implements PersistentSimulation {
 
 	private final long simulationID;
+
+	private Environment env;
 
 	@Singleton
 	static class Factory implements SimulationFactory {
@@ -188,21 +191,37 @@ public class Simulation extends JedisPoolUser implements PersistentSimulation {
 	}
 
 	@Override
-	public void addChild(PersistentSimulation child) {
-		throw new UnsupportedOperationException(
-				"PersistentSimulation.addChild() not implemented for redis db.");
-	}
-
-	@Override
 	public void setParentSimulation(PersistentSimulation parent) {
-		throw new UnsupportedOperationException(
-				"PersistentSimulation.setParentSimulation() not implemented for redis db.");
+		final Jedis r = pool.getResource();
+		try {
+			setLong(Keys.Simulation.parent(getID()), parent.getID());
+			r.sadd(Keys.Simulation.children(parent.getID()), Long.valueOf(getID()).toString());
+		} finally {
+			pool.returnResource(r);
+		}
 	}
 
 	@Override
 	public PersistentSimulation getParentSimulation() {
-		throw new UnsupportedOperationException(
-				"PersistentSimulation.getParentSimulation() not implemented for redis db.");
+		long parentId = getLong(Keys.Simulation.parent(simulationID));
+		if (parentId != 0L)
+			return db.getSimulationById(parentId);
+		else
+			return null;
+	}
+
+	@Override
+	public List<Long> getChildren() {
+		final Jedis r = pool.getResource();
+		try {
+			List<Long> children = new LinkedList<Long>();
+			for (String id : r.smembers(Keys.Simulation.children(getID()))) {
+				children.add(Long.parseLong(id));
+			}
+			return children;
+		} finally {
+			pool.returnResource(r);
+		}
 	}
 
 	@Override
@@ -257,6 +276,13 @@ public class Simulation extends JedisPoolUser implements PersistentSimulation {
 			pool.returnResource(r);
 		}
 		return agents;
+	}
+
+	@Override
+	public PersistentEnvironment getEnvironment() {
+		if (this.env == null)
+			this.env = new Environment(this.getID(), db, pool);
+		return this.env;
 	}
 
 }
